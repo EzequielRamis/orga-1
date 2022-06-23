@@ -1,0 +1,60 @@
+*Ejercicio 1* RISC-V maneja el principio de simplicidad, en relación a esto responda:
+ - ¿Hacer un desplazamiento en un registro es más rápido que buscar el valor que se ha de
+desplazar en memoria?
+ - A partir del inciso anterior, ¿qué habría de tener en cuenta a la hora de revisar el rendimiento
+de su programa?
+
+Respuesta:
+
+*Ejercicio 2* Explique de qué modo se resuelven los saltos incondicionales. ¿Qué sucede con el
+valor de retorno?
+
+Respuesta:
+
+*Ejercicio 3* ¿Qué significa que la arquitectura RISC-V sea modular? ¿Qué ventajas puede tener
+esto?
+
+Respuesta:
+
+*Ejercicio 4* Queremos agregar un flag llamado P (paridad) que nos indica si el resultado de una
+operación en la ALU es par. ¿Qué cambios hacen falta hacer a Orga1SmallI para implementarlo?
+Descríbalos en detalle. ¿Cómo resolvería un salto condicional (JP) por paridad? Suponga que tiene
+espacio libre para la instrucciones en la memoria de la unidad de control y que puede agregar
+tantas señales a la misma como hagan falta.
+
+Respuesta:
+
+*Ejercicio 5* La necesidad de realizar numerosas operaciones sobre datos estructurados en memoria parece
+seguir creciendo mientras que el costo y la escala de las operaciones realizadas por el procesador
+se vuelven más costosas en tiempo e infraestructura. Debido a esto se están evaluando alternativas
+para realizar diversas operaciones en memoria sin tener la obligación de mover datos entre los
+registros y la memoria principal.
+Proponemos el uso de un controlador de memoria con las siguientes señales de control:
+ - mem_op es una señal de tres bits que indican la operación a realizar
+   - 000 no realiza ninguna operación
+   - 001 permite guardar el valor del registro de destino (wrAddr)
+   - 010 permite guardar el valor del registro de fuente (rdAddr)
+   - 011 realiza una escritura en la dirección de destino desde el valor encontrado en inData
+     (equivale al load de nuestra arquitectura)
+   - 100 suma el valor que se encuentra en la dirección de fuente al valor que se encuentra
+     en la direcicón de destino y lo guarda en la dirección de destino
+   - 101 multiplica el valor que se encuentra en la dirección de fuente por el valor que se
+     encuentra en la direcicón de destino y lo guarda en la dirección de destino
+   - 110 limpia el valor que se encuentra en la dirección de destino
+   - 111 mueve el valor que se encuentra en la dirección de fuente (rdAddr) y lo copia en la
+     dirección de destino (wrAddr)
+ - enOut permite volcar el valor encontrado en la direción de fuente en el registro outData    
+Y las siguientes señales de datos:
+ - wrAddr indica la dirección de destino (la dirección de la palabra donde realizaremos una
+   escritura)
+ - rdAddr indica la dirección de fuente (la dirección de la palabra donde realizaremos una
+   lectura)
+ - inData indica el valor de la palabra a guardar en la dirección de destino
+ - outData indica el valor de la palabra a leer de la dirección de fuente
+
+Suponiendo que las señales de control están conectadas a la unidad de control
+(mem_op, enOut) y los registros de datos al bus (wrAddr, rdAddr, inData, outData):
+Escriba un microprograma que permita limpiar el contenido del valor que se encuentra en la
+dirección referida por el registro indicado en el operando X del decoder.
+
+Respuesta:
