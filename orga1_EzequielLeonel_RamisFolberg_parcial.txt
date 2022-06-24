@@ -15,6 +15,30 @@ Respuesta:
 esto?
 
 Respuesta:
+Antes de que se explique en la guía sobre por qué RISC-V es una arquitectura modular, primero se 
+repasa la evolución que ha tenido la arquitectura x86 desde sus comienzos hasta estos días, al ser
+un caso bastante extremo.
+Sabiendo que uno de los objetivos de Intel es permitir que programas viejos puedan ser ejecutados
+en nuevos procesadores, se decidió que los mismos siempre mantengan las instrucciones de los
+procesadores anteriores. Es decir, el set de instrucciones del x86 se agrandó con el paso del
+tiempo desde el procesador 8086 de forma exponencial.
+Esta decisión presenta estas desventajas:
+ - Pobre quien tenga que resolver la organización, pues su diseño y validación se dificultan.
+ - Instrucciones muy poco frecuentes quedan obsoletas.
+ - No es posible ahorrar costos (energéticos por ejemplo) si el objetivo no necesita tanta capacidad
+   que la arquitectura provee.
+ - El exceso de instrucciones dificulta el desarrollo y lectura de programas.
+
+Es por esto que RISC-V se define como modular ya que no sigue esta convención, sino que tiene
+estas características:
+ - De base tiene un set mínimo de instrucciones que es lo suficientemente general para cualquier
+   objetivo. Ya con esto los sistemas embebidos se benefician bastante, por ejemplo.
+ - Si en un objectivo se necesitan instrucciones específicas, como realizar aritmética con
+   números de punto flotante, la arquitectura provee sets adicionales llamados "extensiones" que
+   permiten al hardware poder escalar sin desperdiciar costos adicionales, y al software de no
+   tener que implementar programas adicionales.
+ - Se pueden utilizar varias extensiones a la vez, ya que todas respetan los formatos de instrucción
+   y los bits disponibles para definirse.
 
 *Ejercicio 4* Queremos agregar un flag llamado P (paridad) que nos indica si el resultado de una
 operación en la ALU es par. ¿Qué cambios hacen falta hacer a Orga1SmallI para implementarlo?
