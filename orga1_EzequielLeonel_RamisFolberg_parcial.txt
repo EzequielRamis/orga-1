@@ -5,6 +5,16 @@ desplazar en memoria?
 de su programa?
 
 Respuesta:
+Operar con un valor en un registro siempre va a ser más rápido que con un valor en memoria ya que el
+primero es parte interna de la CPU, por ende está más cerca, no se usan buses y seguramente se
+ahorran ticks de reloj.
+Buena parte del rendimiento de un programa se debe a cuánto se aprovecha la utilización de registros
+y cuánto se evita buscar en memoria. Es por esto que RISC-V se diseñó con grandes cantidades de
+registros, para que los programadores no estén necesitando ir a memoria cuando no haya más
+registros disponibles.
+Se puede comparar con la arquitectura Orga1 que contiene 8 registros, mientras que RISC-V tiene 32,
+así que si existe un programa que utiliza mucha memoria, seguramente en RISC-V al programarlo
+sea mucho más rápido ya que hay más registros para aprovechar.
 
 *Ejercicio 2* Explique de qué modo se resuelven los saltos incondicionales. ¿Qué sucede con el
 valor de retorno?
@@ -13,10 +23,14 @@ Respuesta:
 RISC-V resuelve los saltos incondicionales principalmente con dos instrucciones: jal y jalr.
 Sea rd y rs1 registros, y offset un valor inmediato, así se comportarían:
 
-jal:  rd <- pc; pc <- pc  + sign_ext(offset)
-jalr: rd <- pc; pc <- rs1 + sign_ext(offset)
+jal:  rd <- pc + 4; pc <- pc  + sign_ext(offset)
+jalr: rd <- pc + 4; pc <- rs1 + sign_ext(offset)
 
-Si repasamos la arquitectura de OrgaI vemos que son instrucciones muy parecidas al JMP y al CALL,
+(No entiendo por qué en la guía pc + 4 se considera como la siguiente instrucción y no
+simplemente pc, se supone que en el Fetch el pc ya está +4, además que las instrucciones
+tienen tamaño fijo)
+
+Si repasamos la arquitectura de Orga1 vemos que son instrucciones muy parecidas al JMP y al CALL,
 como si fuesen una combinación. En ambas instrucciones, primero se guarda la dirección de la
 siguiente instrucción en rd, como en el caso de CALL que guarda el pc en el stack.
 Luego se le suma al pc el offset, más el valor de rs1 en caso de jalr; este paso imita al
@@ -51,7 +65,7 @@ Esta decisión presenta estas desventajas:
  - Instrucciones muy poco frecuentes quedan obsoletas.
  - No es posible ahorrar costos (energéticos por ejemplo) si el objetivo no necesita tanta capacidad
    que la arquitectura provee.
- - El exceso de instrucciones dificulta el desarrollo y lectura de programas.
+ - El exceso de instrucciones dificulta el desarrollo y lectura de programas y documentación.
 
 Es por esto que RISC-V se define como modular ya que no sigue esta convención, sino que tiene
 estas características:
@@ -65,7 +79,7 @@ estas características:
    y los bits disponibles para definirse.
 
 Obviamente modularizar una arquitectura se puede exagerar tanto que podría por ejemplo en la de
-OrgaI tener como set mínimo las instrucciones SUB y JLE para tener una máquina de Turing
+Orga1 tener como set mínimo las instrucciones SUB y JLE para tener una máquina de Turing
 (lo chusmeé de acá https://en.wikipedia.org/wiki/One-instruction_set_computer#Subtract_and_branch_if_less_than_or_equal_to_zero)
 pero esto ya sería demasiado engorroso para la programación y se necesitaría urgentemente sus extensiones.
 
