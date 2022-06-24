@@ -6,8 +6,8 @@ de su programa?
 
 Respuesta:
 Operar con un valor en un registro siempre va a ser más rápido que con un valor en memoria ya que el
-primero es parte interna de la CPU, por ende está más cerca, no se usan buses y seguramente se
-ahorran ticks de reloj.
+primero es parte interna de la CPU, por ende está más cerca, no se usan buses y es probable que se
+ahorren ticks de reloj.
 Buena parte del rendimiento de un programa se debe a cuánto se aprovecha la utilización de registros
 y cuánto se evita buscar en memoria. Es por esto que RISC-V se diseñó con grandes cantidades de
 registros, para que los programadores no estén necesitando ir a memoria cuando no haya más
@@ -90,6 +90,25 @@ espacio libre para la instrucciones en la memoria de la unidad de control y que 
 tantas señales a la misma como hagan falta.
 
 Respuesta:
+Un número representado en sistema binario se puede saber si es par o impar viendo su dígito menos
+significativo, si es 0 es par y si es 1 impar.
+Luego, si quiero agregar esa flag P necesito hacer lo siguiente:
+ - Dentro de la ALU, aumento a 4 bits la salida "flags".
+ - Conecto el cable que va a la entrada D de ALU_OUT con un splitter que envíe
+   solamente el bit menos significativo.
+ - Inserto un registro de un bit con las entradas:
+   - Señal que sale del splitter -> D
+   - clk -> Clock
+   - rst -> Clear
+   - Q -> flags
+
+Por último, para resolver el JP hay que hacer lo siguiente:
+ - Dentro de la Unidad de Control, la entrada "flags" aumenta a 4 bits.
+ - Creo una señal llamada "jp_microOp" que sale de la 19º señal de la ROM.
+ - jp_microOp lo agrego como entrada al OR que tiene de entradas j{c,z,n}_microOp.
+ - Inserto un AND con la flag P y jp_microOp como entradas.
+ - La salida del AND la agrego como entrada al OR que también tiene como entradas
+   salidas de otras ANDs.
 
 *Ejercicio 5* La necesidad de realizar numerosas operaciones sobre datos estructurados en memoria parece
 seguir creciendo mientras que el costo y la escala de las operaciones realizadas por el procesador
