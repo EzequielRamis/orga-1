@@ -10,6 +10,30 @@ Respuesta:
 valor de retorno?
 
 Respuesta:
+RISC-V resuelve los saltos incondicionales principalmente con dos instrucciones: jal y jalr.
+Sea rd y rs1 registros, y offset un valor inmediato, así se comportarían:
+
+jal:  rd <- pc; pc <- pc  + sign_ext(offset)
+jalr: rd <- pc; pc <- rs1 + sign_ext(offset)
+
+Si repasamos la arquitectura de OrgaI vemos que son instrucciones muy parecidas al JMP y al CALL,
+como si fuesen una combinación. En ambas instrucciones, primero se guarda la dirección de la
+siguiente instrucción en rd, como en el caso de CALL que guarda el pc en el stack.
+Luego se le suma al pc el offset, más el valor de rs1 en caso de jalr; este paso imita al
+comportamiento del JMP.
+
+Por default si rd no está definido, se asume que el pc se guarda en ra, un registro dedicado al
+valor de retorno que sirve cuando se llaman funciones.
+
+Por como están diseñadas estas instrucciones, son lo suficientemente flexibles como para poder
+imitar el comportamiento del JMP, CALL, y encima el RET también. Para no extender mucho,
+muestro solamente el de JMP, ya que CALL y RET usan el stack y tengo que usar otras instrucciones:
+
+JMP: jalr x0, offset, rs1
+
+Ignorando el offset y el rs1, se ve que se quiere guardar el pc en x0, pero RISC-V utiliza ese
+registro especialmente como constante 0, por lo que no se hace nada y sólo se asigna un nuevo valor
+al pc.
 
 *Ejercicio 3* ¿Qué significa que la arquitectura RISC-V sea modular? ¿Qué ventajas puede tener
 esto?
@@ -39,6 +63,11 @@ estas características:
    tener que implementar programas adicionales.
  - Se pueden utilizar varias extensiones a la vez, ya que todas respetan los formatos de instrucción
    y los bits disponibles para definirse.
+
+Obviamente modularizar una arquitectura se puede exagerar tanto que podría por ejemplo en la de
+OrgaI tener como set mínimo las instrucciones SUB y JLE para tener una máquina de Turing
+(lo chusmeé de acá https://en.wikipedia.org/wiki/One-instruction_set_computer#Subtract_and_branch_if_less_than_or_equal_to_zero)
+pero esto ya sería demasiado engorroso para la programación y se necesitaría urgentemente sus extensiones.
 
 *Ejercicio 4* Queremos agregar un flag llamado P (paridad) que nos indica si el resultado de una
 operación en la ALU es par. ¿Qué cambios hacen falta hacer a Orga1SmallI para implementarlo?
