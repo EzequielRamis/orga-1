@@ -6,12 +6,11 @@ de su programa?
 
 Respuesta:
 Operar con un valor en un registro siempre va a ser más rápido que con un valor en memoria ya que el
-primero es parte interna de la CPU, por ende está más cerca, no se usan buses y es probable que se
+primero es parte interno de la CPU, por ende está más cerca, no se usan buses y es probable que se
 ahorren ticks de reloj.
 Buena parte del rendimiento de un programa se debe a cuánto se aprovecha la utilización de registros
 y cuánto se evita buscar en memoria. Es por esto que RISC-V se diseñó con grandes cantidades de
-registros, para que los programadores no estén necesitando ir a memoria cuando no haya más
-registros disponibles.
+registros, para que los programadores no estén necesitando ir a memoria todo el tiempo.
 Se puede comparar con la arquitectura Orga1 que contiene 8 registros, mientras que RISC-V tiene 32,
 así que si existe un programa que utiliza mucha memoria, seguramente en RISC-V al programarlo
 sea mucho más rápido ya que hay más registros para aprovechar.
@@ -40,7 +39,7 @@ Por default si rd no está definido, se asume que el pc se guarda en ra, un regi
 valor de retorno que sirve cuando se llaman funciones.
 
 Por como están diseñadas estas instrucciones, son lo suficientemente flexibles como para poder
-imitar el comportamiento del JMP, CALL, y encima el RET también. Para no extender mucho,
+imitar el comportamiento del JMP, CALL, y encima el RET también. Pero, para no extender mucho,
 muestro solamente el de JMP, ya que CALL y RET usan el stack y tengo que usar otras instrucciones:
 
 JMP: jalr x0, offset, rs1
@@ -65,23 +64,23 @@ Esta decisión presenta estas desventajas:
  - Instrucciones muy poco frecuentes quedan obsoletas.
  - No es posible ahorrar costos (energéticos por ejemplo) si el objetivo no necesita tanta capacidad
    que la arquitectura provee.
- - El exceso de instrucciones dificulta el desarrollo y lectura de programas y documentación.
+ - El exceso de instrucciones dificulta el desarrollo y lectura de programas y de documentación.
 
-Es por esto que RISC-V se define como modular ya que no sigue esta convención, sino que tiene
-estas características:
+Es por esto que RISC-V se define como modular ya que no sigue esta convención, sino que se basa
+en estas características:
  - De base tiene un set mínimo de instrucciones que es lo suficientemente general para cualquier
    objetivo. Ya con esto los sistemas embebidos se benefician bastante, por ejemplo.
  - Si en un objectivo se necesitan instrucciones específicas, como realizar aritmética con
    números de punto flotante, la arquitectura provee sets adicionales llamados "extensiones" que
    permiten al hardware poder escalar sin desperdiciar costos adicionales, y al software de no
-   tener que implementar programas adicionales.
+   tener implementado programas adicionales.
  - Se pueden utilizar varias extensiones a la vez, ya que todas respetan los formatos de instrucción
    y los bits disponibles para definirse.
 
 Obviamente modularizar una arquitectura se puede exagerar tanto que podría por ejemplo en la de
 Orga1 tener como set mínimo las instrucciones SUB y JLE para tener una máquina de Turing
 (lo chusmeé de acá https://en.wikipedia.org/wiki/One-instruction_set_computer#Subtract_and_branch_if_less_than_or_equal_to_zero)
-pero esto ya sería demasiado engorroso para la programación y se necesitaría urgentemente sus extensiones.
+pero esto ya sería demasiado engorroso para la programación y se necesitaría urgentemente extensiones.
 
 *Ejercicio 4* Queremos agregar un flag llamado P (paridad) que nos indica si el resultado de una
 operación en la ALU es par. ¿Qué cambios hacen falta hacer a Orga1SmallI para implementarlo?
@@ -116,7 +115,7 @@ Por último, para resolver el JP hay que hacer lo siguiente:
        JP_microOp load_microOp ; suma 1 o 2 al microPC si P es 0 o 1 respectivamente
        reset_microOp           ; se levanta si se sumó 1 el microPC
        DE_enOutImm PC_load     ; se asigna el PC si se sumó 2 el microPC
-       reset_microOp
+       reset_microOp           ; termina la microoperación
 
 *Ejercicio 5* La necesidad de realizar numerosas operaciones sobre datos estructurados en memoria parece
 seguir creciendo mientras que el costo y la escala de las operaciones realizadas por el procesador
@@ -153,8 +152,9 @@ dirección referida por el registro indicado en el operando X del decoder.
 
 Respuesta:
 Lo que se me pide simplificadamente es lo siguiente: [Rx] <- 0x0
-Luego:
+Luego, el microprograma es el siguiente:
+
   01101 ; CLS (13)
       mem_op=001 RB_enOut RB_selectIndexOut=0 ; guardo en el registro de destino lo que sale de Rx
       mem_op=110                              ; limpio en [Rx]
-      reset_microOp
+      reset_microOp                           ; termina
