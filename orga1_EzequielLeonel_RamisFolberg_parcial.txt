@@ -152,3 +152,9 @@ Escriba un microprograma que permita limpiar el contenido del valor que se encue
 dirección referida por el registro indicado en el operando X del decoder.
 
 Respuesta:
+Lo que se me pide simplificadamente es lo siguiente: [Rx] <- 0x0
+Luego:
+  01101 ; CLS (13)
+      mem_op=001 RB_enOut RB_selectIndexOut=0 ; guardo en el registro de destino lo que sale de Rx
+      mem_op=110                              ; limpio en [Rx]
+      reset_microOp
