@@ -91,24 +91,32 @@ tantas señales a la misma como hagan falta.
 
 Respuesta:
 Un número representado en sistema binario se puede saber si es par o impar viendo su dígito menos
-significativo, si es 0 es par y si es 1 impar.
+significativo, si es 0 es par y si es 1 impar (Sin embargo, se invierte en la flag por semántica).
 Luego, si quiero agregar esa flag P necesito hacer lo siguiente:
  - Dentro de la ALU, aumento a 4 bits la salida "flags".
- - Conecto el cable que va a la entrada D de ALU_OUT con un splitter que envíe
+ - Conecto el cable que va a la entrada D de ALU_OUT con un splitter que envía
    solamente el bit menos significativo.
  - Inserto un registro de un bit con las entradas:
-   - Señal que sale del splitter -> D
+   - NOT(Señal que sale del splitter) -> D
    - clk -> Clock
    - rst -> Clear
    - Q -> flags
 
 Por último, para resolver el JP hay que hacer lo siguiente:
  - Dentro de la Unidad de Control, la entrada "flags" aumenta a 4 bits.
- - Creo una señal llamada "jp_microOp" que sale de la 19º señal de la ROM.
+ - Creo una señal llamada "jp_microOp" que sale de la 23º señal de la ROM.
  - jp_microOp lo agrego como entrada al OR que tiene de entradas j{c,z,n}_microOp.
  - Inserto un AND con la flag P y jp_microOp como entradas.
  - La salida del AND la agrego como entrada al OR que también tiene como entradas
    salidas de otras ANDs.
+ - Al archivo .ops que luego se inserta compilado en la ROM le agrego la siguiente
+   instrucción:
+
+   01100: ; JP (12)
+       JP_microOp load_microOp ; suma 1 o 2 al microPC si P es 0 o 1 respectivamente
+       reset_microOp           ; se levanta si se sumó 1 el microPC
+       DE_enOutImm PC_load     ; se asigna el PC si se sumó 2 el microPC
+       reset_microOp
 
 *Ejercicio 5* La necesidad de realizar numerosas operaciones sobre datos estructurados en memoria parece
 seguir creciendo mientras que el costo y la escala de las operaciones realizadas por el procesador

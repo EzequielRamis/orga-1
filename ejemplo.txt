@@ -1,0 +1,5 @@
+main |00| SET R1 , 0x13
+     |02| SET R0 , 0x01
+sumo |04| ADD R1 , R0
+     |06| JP sumo
+halt |08| JMP halt
